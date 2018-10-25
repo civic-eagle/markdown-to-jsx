@@ -138,6 +138,8 @@ const HTML_BLOCK_ELEMENT_R = /^ *<([A-Za-z][^ >/]*) ?([^>]*)\/{0}>\n?(\s*(?:<\1[
 // const HTML_MIXED_ELEMENT_R = /^([^\n< ][^\n<]+<[^>\n]+>[^\n]+|<[^>\n]+>[^\n]+<\/[^>\n]*>[^<\n]+)(\n\n+|$)/;
 const HTML_MIXED_ELEMENT_R = /^(([^<](?!\n\n))+<[^>\n]+>[\s\S]*?|.+?<\/[^>\n]*>[^\n][\s\S]+?)(\n\n+|$)/;
 
+const HTML_INLINE_ELEMENT_R =  /^ *<([A-Za-z][^ >/]*) ?([^>]*)\/{0}>\n?(\s*(?:<\1[^>]*?>[\s\S]*?<\/\1>|(?!<\1)[\s\S])*?)<\/\1>/;
+
 const HTML_COMMENT_R = /^<!--.*?-->/;
 
 /**
@@ -1068,6 +1070,29 @@ export function compiler(markdown, options) {
                 );
             },
 
+        },
+
+        htmlInline: {
+            match: (source, state) => {
+                console.log(`testing htmlInline, inline is ${state.inline}, source`, source);
+                return (state.inline && HTML_INLINE_ELEMENT_R.exec(source));
+            },
+            order: PARSE_PRIORITY_HIGH,
+            parse(capture, parse, state) {
+                console.log('MATCHED htmlInline, capture', capture);
+                return {
+                    attrs: attrStringToMap(capture[2]),
+                    content: parseInline(parse, capture[3], state),
+                    tag: capture[1],
+                };
+            },
+            react(node, output, state) {
+                return (
+                    <node.tag key={state.key} {...node.attrs}>
+                        {output(node.content, state)}
+                    </node.tag>
+                );
+            }
         },
 
         htmlBlock: {
