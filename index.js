@@ -131,11 +131,12 @@ const HEADING_SETEXT_R = /^([^\n]+)\n *(=|-){3,} *(?:\n *)+\n/;
  * 6. Capture excess newlines afterward
  *    \n*
  */                         //^ SPACE <TAGNAME       ATTRS    />  NEWLINE
-const HTML_BLOCK_ELEMENT_R = /^ *<([A-Za-z][^ >/]*) ?([^>]*)\/{0}>\n?(\s*(?:<\1[^>]*?>[\s\S]*?<\/\1>|(?!<\1)[\s\S])*?)<\/\1>\n*/;
+const HTML_BLOCK_ELEMENT_R = /^ *<([A-Za-z][^ >/]*) ?([^>]*)\/{0}>\n?(\s*(?:<\1[^>]*?>[\s\S]*?<\/\1>|(?!<\1)[\s\S])*?)<\/\1>(?!\S)\n*/;
 
 //const HTML_MIXED_ELEMENT_R = /^ *<([A-Za-z][^ >/]*) ?([^>]*)\/{0}>[^\n]*<\/\1>[^<\n]+\n+/;
 // const HTML_MIXED_ELEMENT_R = /^([^\n<]+<[^>\n]+>|<[^>\n]+>[^\n]+<\/[^>\n]*>[^<\n]+)[^\n]+\n+/;
-const HTML_MIXED_ELEMENT_R = /^([^\n< ][^\n<]+<[^>\n]+>[^\n]+|<[^>\n]+>[^\n]+<\/[^>\n]*>[^<\n]+)(\n+|$)/;
+// const HTML_MIXED_ELEMENT_R = /^([^\n< ][^\n<]+<[^>\n]+>[^\n]+|<[^>\n]+>[^\n]+<\/[^>\n]*>[^<\n]+)(\n\n+|$)/;
+const HTML_MIXED_ELEMENT_R = /^(([^<](?!\n\n))+<[^>\n]+>[\s\S]*?|.+?<\/[^>\n]*>[^\n][\s\S]+?)(\n\n+|$)/;
 
 const HTML_COMMENT_R = /^<!--.*?-->/;
 
@@ -1037,16 +1038,17 @@ export function compiler(markdown, options) {
         // Added "A" to get rule to apply before htmlBlock (alphabetical)
         htmlAMixedInline: {
             match: (source, state, prevCapture) => {
-                // console.log('testing htmlMixed on source, it matches?', source, HTML_MIXED_ELEMENT_R.test(source));
-                // console.log('htmlMixed extra stuff matches? lastmatch, state:', !!(state.inline || (lastMatch && lastMatch.trim() === source.trim())), lastMatch, state);
+                // const matchStatus = HTML_MIXED_ELEMENT_R.test(source) ? 'MATCHED' : 'nope';
+                // console.log(`TESTING htmlMixed: ${matchStatus} on source:`, source);
+                // console.log('htmlMixed: are we inline?', (state.inline));
                 return (state.inline) ? false : HTML_MIXED_ELEMENT_R.exec(source);
             },
             order: PARSE_PRIORITY_HIGH,
             parse(capture, parse, state) {
-                // console.log('matched htmlMixedInline', capture);
+                // console.log('MATCHED htmlMixedInline', capture);
                 // console.log('htmlMixedInline state', state);
                 const inside = `${capture[0]}`.trim();
-                // console.log('going to spit out inside content:', inside);
+                // console.log('OUTPUT inside content:', inside);
 
                 return {
                     /**
