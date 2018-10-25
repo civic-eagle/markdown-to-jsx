@@ -130,8 +130,12 @@ const HEADING_SETEXT_R = /^([^\n]+)\n *(=|-){3,} *(?:\n *)+\n/;
  *
  * 6. Capture excess newlines afterward
  *    \n*
- */
+ */                         //^ SPACE <TAGNAME       ATTRS    />  NEWLINE
 const HTML_BLOCK_ELEMENT_R = /^ *<([A-Za-z][^ >/]*) ?([^>]*)\/{0}>\n?(\s*(?:<\1[^>]*?>[\s\S]*?<\/\1>|(?!<\1)[\s\S])*?)<\/\1>\n*/;
+
+//const HTML_MIXED_ELEMENT_R = /^ *<([A-Za-z][^ >/]*) ?([^>]*)\/{0}>[^\n]*<\/\1>[^<\n]+\n+/;
+// const HTML_MIXED_ELEMENT_R = /^([^\n<]+<[^>\n]+>|<[^>\n]+>[^\n]+<\/[^>\n]*>[^<\n]+)[^\n]+\n+/;
+const HTML_MIXED_ELEMENT_R = /^([^\n< ][^\n<]+<[^>\n]+>[^\n]+|<[^>\n]+>[^\n]+<\/[^>\n]*>[^<\n]+)(\n+|$)/;
 
 const HTML_COMMENT_R = /^<!--.*?-->/;
 
@@ -479,9 +483,11 @@ function parserFor(rules) {
         let prevCapture = '';
         while (source) {
             let i = 0;
+            // JESSE DEBUG console.log(source);
             while (i < ruleList.length) {
                 const ruleType = ruleList[i];
                 const rule = rules[ruleType];
+                //console.log(`checking ${ruleType} on ${source}`);
                 const capture = rule.match(source, state, prevCapture);
 
                 if (capture) {
@@ -1028,11 +1034,49 @@ export function compiler(markdown, options) {
             },
         },
 
+        // Added "A" to get rule to apply before htmlBlock (alphabetical)
+        htmlAMixedInline: {
+            match: (source, state, prevCapture) => {
+                // console.log('testing htmlMixed on source, it matches?', source, HTML_MIXED_ELEMENT_R.test(source));
+                // console.log('htmlMixed extra stuff matches? lastmatch, state:', !!(state.inline || (lastMatch && lastMatch.trim() === source.trim())), lastMatch, state);
+                return (state.inline) ? false : HTML_MIXED_ELEMENT_R.exec(source);
+            },
+            order: PARSE_PRIORITY_HIGH,
+            parse(capture, parse, state) {
+                // console.log('matched htmlMixedInline', capture);
+                // console.log('htmlMixedInline state', state);
+                const inside = `${capture[0]}`.trim();
+                // console.log('going to spit out inside content:', inside);
+
+                return {
+                    /**
+                    * if another html block is detected within, parse as block,
+                    * otherwise parse as inline to pick up any further markdown
+                    */
+                    content: parseInline(parse, inside, state, capture[0])
+
+                };
+            },
+            //
+            react(node, output, state) {
+                return (
+                    <p key={state.key}>
+                        {output(node.content, state)}
+                    </p>
+                );
+            },
+
+        },
+
         htmlBlock: {
             /**
              * find the first matching end tag and process the interior
              */
-            match: anyScopeRegex(HTML_BLOCK_ELEMENT_R),
+            //match: anyScopeRegex(HTML_BLOCK_ELEMENT_R),
+            match: (source /*, state*/) => {
+                // console.log('matched htmlBlock, source', source);
+                return HTML_BLOCK_ELEMENT_R.exec(source)
+            },
             order: PARSE_PRIORITY_HIGH,
             parse(capture, parse, state) {
                 const [, whitespace] = capture[3].match(HTML_LEFT_TRIM_AMOUNT_R)
