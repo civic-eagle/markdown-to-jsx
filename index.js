@@ -1041,13 +1041,13 @@ export function compiler(markdown, options) {
         htmlAMixedInline: {
             match: (source, state, prevCapture) => {
                 const matchStatus = HTML_MIXED_ELEMENT_R.test(source) ? 'MATCHED' : 'nope';
-                console.log(`TESTING htmlMixed: ${matchStatus} on source:`, source);
-                console.log('htmlMixed: are we inline?', (state.inline));
+                // console.log(`TESTING htmlMixed: ${matchStatus} on source:`, source);
+                // console.log('htmlMixed: are we inline?', (state.inline));
                 return (state.inline) ? false : HTML_MIXED_ELEMENT_R.exec(source);
             },
             order: PARSE_PRIORITY_HIGH,
             parse(capture, parse, state) {
-                console.log('MATCHED htmlMixedInline', capture);
+                // console.log('MATCHED htmlMixedInline', capture);
                 // console.log('htmlMixedInline state', state);
                 const inside = `${capture[0]}`.trim();
                 // console.log('OUTPUT inside content:', inside);
@@ -1074,12 +1074,12 @@ export function compiler(markdown, options) {
 
         htmlInline: {
             match: (source, state) => {
-                console.log(`testing htmlInline, inline is ${state.inline}, source`, source);
+                // console.log(`testing htmlInline, inline is ${state.inline}, source`, source);
                 return (state.inline && HTML_INLINE_ELEMENT_R.exec(source));
             },
             order: PARSE_PRIORITY_HIGH,
             parse(capture, parse, state) {
-                console.log('MATCHED htmlInline, capture', capture);
+                // console.log('MATCHED htmlInline, capture', capture);
                 return {
                     attrs: attrStringToMap(capture[2]),
                     content: parseInline(parse, capture[3], state),
@@ -1101,12 +1101,12 @@ export function compiler(markdown, options) {
              */
             //match: anyScopeRegex(HTML_BLOCK_ELEMENT_R),
             match: (source /*, state*/) => {
-                console.log('TESTING htmlBlock, source', source);
+                // console.log('TESTING htmlBlock, source', source);
                 return HTML_BLOCK_ELEMENT_R.exec(source)
             },
             order: PARSE_PRIORITY_HIGH,
             parse(capture, parse, state) {
-                console.log('MATCHED htmlBlock, capture', capture);
+                // console.log('MATCHED htmlBlock, capture', capture);
                 const [, whitespace] = capture[3].match(HTML_LEFT_TRIM_AMOUNT_R)
                 const trimmer = new RegExp(`^${whitespace}`, 'gm')
                 const trimmed = (options.doNotLeftTrimInHTML) ? capture[3]
