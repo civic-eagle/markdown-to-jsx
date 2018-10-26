@@ -136,7 +136,7 @@ const HTML_BLOCK_ELEMENT_R = /^ *<([A-Za-z][^ >/]*) ?([^>]*)\/{0}>\n?(\s*(?:<\1[
 //const HTML_MIXED_ELEMENT_R = /^ *<([A-Za-z][^ >/]*) ?([^>]*)\/{0}>[^\n]*<\/\1>[^<\n]+\n+/;
 // const HTML_MIXED_ELEMENT_R = /^([^\n<]+<[^>\n]+>|<[^>\n]+>[^\n]+<\/[^>\n]*>[^<\n]+)[^\n]+\n+/;
 // const HTML_MIXED_ELEMENT_R = /^([^\n< ][^\n<]+<[^>\n]+>[^\n]+|<[^>\n]+>[^\n]+<\/[^>\n]*>[^<\n]+)(\n\n+|$)/;
-const HTML_MIXED_ELEMENT_R = /^(([^<](?!\n\n))+<[^>\n]+>[\s\S]*?|.+?<\/[^>\n]*>[^\n][\s\S]+?)(\n\n+|$)/;
+const HTML_MIXED_ELEMENT_R = /^ *(([^<*#>](?!\n\n))+<[^>\n]+>[\s\S]*?|(.|\n(?!\n))+?<\/[^>\n]*>[^\n][\s\S]+?)(\n\n+|$)/;
 
 const HTML_INLINE_ELEMENT_R =  /^ *<([A-Za-z][^ >/]*) ?([^>]*)\/{0}>\n?(\s*(?:<\1[^>]*?>[\s\S]*?<\/\1>|(?!<\1)[\s\S])*?)<\/\1>/;
 
@@ -1040,14 +1040,14 @@ export function compiler(markdown, options) {
         // Added "A" to get rule to apply before htmlBlock (alphabetical)
         htmlAMixedInline: {
             match: (source, state, prevCapture) => {
-                // const matchStatus = HTML_MIXED_ELEMENT_R.test(source) ? 'MATCHED' : 'nope';
-                // console.log(`TESTING htmlMixed: ${matchStatus} on source:`, source);
-                // console.log('htmlMixed: are we inline?', (state.inline));
+                const matchStatus = HTML_MIXED_ELEMENT_R.test(source) ? 'MATCHED' : 'nope';
+                console.log(`TESTING htmlMixed: ${matchStatus} on source:`, source);
+                console.log('htmlMixed: are we inline?', (state.inline));
                 return (state.inline) ? false : HTML_MIXED_ELEMENT_R.exec(source);
             },
             order: PARSE_PRIORITY_HIGH,
             parse(capture, parse, state) {
-                // console.log('MATCHED htmlMixedInline', capture);
+                console.log('MATCHED htmlMixedInline', capture);
                 // console.log('htmlMixedInline state', state);
                 const inside = `${capture[0]}`.trim();
                 // console.log('OUTPUT inside content:', inside);
@@ -1101,11 +1101,12 @@ export function compiler(markdown, options) {
              */
             //match: anyScopeRegex(HTML_BLOCK_ELEMENT_R),
             match: (source /*, state*/) => {
-                // console.log('matched htmlBlock, source', source);
+                console.log('TESTING htmlBlock, source', source);
                 return HTML_BLOCK_ELEMENT_R.exec(source)
             },
             order: PARSE_PRIORITY_HIGH,
             parse(capture, parse, state) {
+                console.log('MATCHED htmlBlock, capture', capture);
                 const [, whitespace] = capture[3].match(HTML_LEFT_TRIM_AMOUNT_R)
                 const trimmer = new RegExp(`^${whitespace}`, 'gm')
                 const trimmed = (options.doNotLeftTrimInHTML) ? capture[3]
