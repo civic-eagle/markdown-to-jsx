@@ -751,6 +751,14 @@ export function compiler(markdown, options) {
         );
     }
 
+    function trimNewlinesAndTrailingWhitespace(input) {
+        if (options.doNotTrimNewlinesAndTrailingWhitespace) {
+            return input;
+        }
+
+        return `${input.replace(TRIM_NEWLINES_AND_TRAILING_WHITESPACE_R, '')}\n\n`;
+    }
+
     function compile(input) {
         let inline = false;
 
@@ -768,10 +776,7 @@ export function compiler(markdown, options) {
             parser(
                 inline
                     ? input
-                    : `${input.replace(
-                          TRIM_NEWLINES_AND_TRAILING_WHITESPACE_R,
-                          ''
-                      )}\n\n`,
+                    : trimNewlinesAndTrailingWhitespace(input),
                 { inline }
             )
         );
