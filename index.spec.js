@@ -585,12 +585,20 @@ describe('markdown-to-jsx', () => {
         });
 
         describe('cex styles', () => {
-            it('underlines when triple equal is present', () => {
+            it('handles underlines and strikethroughs on a single line', () => {
                 const result = ReactDOMServer.renderToStaticMarkup(compiler('The name ===Bob=== should be underlined'));
+                expect(result).toMatchSnapshot();
 
-                expect(result).toMatchSnapshot(); //root.innerHTML).toMatchSnapshot();
+                const result2 = ReactDOMServer.renderToStaticMarkup(compiler('===abnormal conditions, ===or ~~physical examination ~~===other conditions ===of ~~a patient in a persons office or in a hospital~~===the human foot===, ~~clinic~~===ankle===, ===and leg using==='));
+                expect(result2).toMatchSnapshot();
             });
-        })
+
+            it('handles underlines spanning across a line', () => {
+                const result = ReactDOMServer.renderToStaticMarkup(compiler('Here is an ===underline that\nspans lines=== ok done'));
+
+                expect(result).toMatchSnapshot();
+            });
+        });
 
         describe('arbitrary HTML', () => {
             it('preserves the HTML given', () => {

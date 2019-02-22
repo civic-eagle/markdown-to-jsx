@@ -46,6 +46,7 @@
     "emotion": "^9.1.2",
     "eslint": "^4.12.1",
     "eslint-config-prettier": "^2.9.0",
+    "eslint-plugin-prettier": "^3.0.0",
     "eslint-plugin-react": "^7.5.1",
     "in-publish": "^2.0.0",
     "jest": "^22.4.3",
@@ -78,7 +79,8 @@
     "release:debug": "webpack --config ./webpack.config.babel.js --display-optimization-bailout",
     "start": "webpack-dev-server --hot --inline --open",
     "test": "jest --verbose",
-    "size": "size-limit"
+    "size": "size-limit",
+    "jesse": "babel jesse.js --out-file jesse.cjs.js --source-maps && node jesse.cjs.js"
   },
   "size-limit": [
     {

@@ -643,16 +643,7 @@ exports[`markdown-to-jsx compiler arbitrary HTML nested lists work inside html 1
 
 `;
 
-exports[`markdown-to-jsx compiler cex styles underlines when triple equal is present 1`] = `"<span>The name <ins>Bob</ins> should be underlined</span>"`;
-
 exports[`markdown-to-jsx compiler arbitrary HTML preserves the HTML given 1`] = `"<dd>Hello</dd>"`;
-
-exports[`markdown-to-jsx compiler arbitrary HTML treats mixed HTML/text block as paragraph 1`] = `"<div><p><ins>in a tag</ins> outside of a tag</p><p>Line 2 - 1</p></div>"`;
-
-exports[`markdown-to-jsx compiler arbitrary HTML treats mixed HTML/text block as paragraph 2`] = `"<div><p>outside of a tag <ins>in a tag</ins></p><p>Line 2 - 2</p></div>"`;
-
-exports[`markdown-to-jsx compiler arbitrary HTML treats mixed HTML/text block as paragraph 3`] = `"<div><p>tag in the <ins>middle</ins> of the line</p><p>Line 2 - 3</p></div>"`;
-
 
 exports[`markdown-to-jsx compiler arbitrary HTML processes attributes that need JSX massaging within inline HTML 1`] = `
 
@@ -842,6 +833,22 @@ exports[`markdown-to-jsx compiler arbitrary HTML throws out HTML comments 1`] = 
 </p>
 
 `;
+
+exports[`markdown-to-jsx compiler arbitrary HTML treats mixed HTML/text block as paragraph 1`] = `"<div><p><ins>in a tag</ins> outside of a tag</p><p>Line 2 - 1</p></div>"`;
+
+exports[`markdown-to-jsx compiler arbitrary HTML treats mixed HTML/text block as paragraph 2`] = `"<div><p>outside of a tag <ins>in a tag</ins></p><p>Line 2 - 2</p></div>"`;
+
+exports[`markdown-to-jsx compiler arbitrary HTML treats mixed HTML/text block as paragraph 3`] = `"<div><p>tag in the <ins>middle</ins> of the line</p><p>Line 2 - 3</p></div>"`;
+
+exports[`markdown-to-jsx compiler cex styles handles underlines and strikethroughs on a single line 1`] = `"<span>The name <ins>Bob</ins> should be underlined</span>"`;
+
+exports[`markdown-to-jsx compiler cex styles handles underlines and strikethroughs on a single line 2`] = `"<span><ins>abnormal conditions, </ins>or <del>physical examination </del><ins>other conditions </ins>of <del>a patient in a persons office or in a hospital</del><ins>the human foot</ins>, <del>clinic</del><ins>ankle</ins>, <ins>and leg using</ins></span>"`;
+
+exports[`markdown-to-jsx compiler cex styles handles underlines spanning across a line 1`] = `"<p>Here is an <ins>underline that\nspans lines</ins> ok done</p>"`;
+
+exports[`markdown-to-jsx compiler cex styles handles underlines and strikethroughs on a single line 1`] = `"<span>The name <ins>Bob</ins> should be underlined</span>"`;
+
+exports[`markdown-to-jsx compiler cex styles handles underlines and strikethroughs on a single line 2`] = `"<span><ins>abnormal conditions, </ins>or <del>physical examination </del><ins>other conditions </ins>of <del>a patient in a persons office or in a hospital</del><ins>the human foot</ins>, <del>clinic</del><ins>ankle</ins>, <ins>and leg using</ins></span>"`;
 
 exports[`markdown-to-jsx compiler fenced code blocks should be handled 1`] = `
 
