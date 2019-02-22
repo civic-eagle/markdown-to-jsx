@@ -643,13 +643,16 @@ exports[`markdown-to-jsx compiler arbitrary HTML nested lists work inside html 1
 
 `;
 
-exports[`markdown-to-jsx compiler arbitrary HTML preserves the HTML given 1`] = `
+exports[`markdown-to-jsx compiler cex styles underlines when triple equal is present 1`] = `"<span>The name <ins>Bob</ins> should be underlined</span>"`;
 
-<dd data-reactroot>
-  Hello
-</dd>
+exports[`markdown-to-jsx compiler arbitrary HTML preserves the HTML given 1`] = `"<dd>Hello</dd>"`;
 
-`;
+exports[`markdown-to-jsx compiler arbitrary HTML treats mixed HTML/text block as paragraph 1`] = `"<div><p><ins>in a tag</ins> outside of a tag</p><p>Line 2 - 1</p></div>"`;
+
+exports[`markdown-to-jsx compiler arbitrary HTML treats mixed HTML/text block as paragraph 2`] = `"<div><p>outside of a tag <ins>in a tag</ins></p><p>Line 2 - 2</p></div>"`;
+
+exports[`markdown-to-jsx compiler arbitrary HTML treats mixed HTML/text block as paragraph 3`] = `"<div><p>tag in the <ins>middle</ins> of the line</p><p>Line 2 - 3</p></div>"`;
+
 
 exports[`markdown-to-jsx compiler arbitrary HTML processes attributes that need JSX massaging within inline HTML 1`] = `
 

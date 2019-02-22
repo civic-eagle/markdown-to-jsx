@@ -193,6 +193,7 @@ const TABLE_ROW_SPLIT = / *\| */;
 const TEXT_BOLD_R = /^([*_])\1((?:[^`~()\[\]<>]*?|(?:.*?([`~]).*?\3.*?)*|(?:.*?\([^)]*?\).*?)*|(?:.*?\[[^\]]*?\].*?)*|(?:.*?<.*?>.*?)*|[^\1]*?)\1?)\1{2}/;
 const TEXT_EMPHASIZED_R = /^([*_])((?:[^`~()\[\]<>]*?|(?:.*?([`~]).*?\3.*?)*|(?:.*?\([^)]*?\).*?)*|(?:.*?\[[^\]]*?\].*?)*|(?:.*?<.*?>.*?)*|[^\1]*?))\1/;
 const TEXT_STRIKETHROUGHED_R = /^~~((?:.*?([`~]).*?\2.*?)*|(?:.*?<.*?>.*?)*|.+?)~~/;
+const TEXT_UNDERLINED_R = /^===((?:.*?([`~]).*?\2.*?)*|(?:.*?<.*?>.*?)*|.+?)===/;
 
 const TEXT_ESCAPED_R = /^\\([^0-9A-Za-z\s])/;
 const TEXT_PLAIN_R = /^[\s\S]+?(?=[^0-9A-Z\s\u00c0-\uffff]|\d+\.|\n\n| {2,}\n|\w+:\S|$)/i;
@@ -1601,6 +1602,15 @@ export function compiler(markdown, options) {
             parse: parseCaptureInline,
             react(node, output, state) {
                 return <del key={state.key}>{output(node.content, state)}</del>;
+            },
+        },
+
+        textUnderlined: {
+            match: simpleInlineRegex(TEXT_UNDERLINED_R),
+            order: PARSE_PRIORITY_LOW,
+            parse: parseCaptureInline,
+            react(node, output, state) {
+                return <ins key={state.key}>{output(node.content, state)}</ins>;
             },
         },
     };

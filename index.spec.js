@@ -1,5 +1,6 @@
 import Markdown, { compiler } from './index';
 import React from 'react';
+import ReactDOMServer from 'react-dom/server';
 import ReactDOM from 'react-dom';
 import fs from 'fs';
 
@@ -583,11 +584,31 @@ describe('markdown-to-jsx', () => {
             });
         });
 
+        describe('cex styles', () => {
+            it('underlines when triple equal is present', () => {
+                const result = ReactDOMServer.renderToStaticMarkup(compiler('The name ===Bob=== should be underlined'));
+
+                expect(result).toMatchSnapshot(); //root.innerHTML).toMatchSnapshot();
+            });
+        })
+
         describe('arbitrary HTML', () => {
             it('preserves the HTML given', () => {
-                render(compiler('<dd>Hello</dd>'));
+                const result = ReactDOMServer.renderToStaticMarkup(compiler('<dd>Hello</dd>'));
 
-                expect(root.innerHTML).toMatchSnapshot();
+                expect(result).toMatchSnapshot(); //root.innerHTML).toMatchSnapshot();
+            });
+
+            it('treats mixed HTML/text block as paragraph', () => {
+                const result = ReactDOMServer.renderToStaticMarkup(compiler('<ins>in a tag</ins> outside of a tag\n\nLine 2 - 1'));
+                expect(result).toMatchSnapshot();
+
+                const result2 = ReactDOMServer.renderToStaticMarkup(compiler('outside of a tag <ins>in a tag</ins>\n\nLine 2 - 2'));
+                expect(result2).toMatchSnapshot();
+
+                const result3 = ReactDOMServer.renderToStaticMarkup(compiler('tag in the <ins>middle</ins> of the line\n\nLine 2 - 3'));
+                expect(result3).toMatchSnapshot();
+
             });
 
             it('processes markdown within inline HTML', () => {
